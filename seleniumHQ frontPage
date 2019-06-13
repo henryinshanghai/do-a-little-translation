@@ -1,0 +1,107 @@
+Selenium 下载
+  先前的版本
+  源码
+  Maven相关的信息
+  
+  
+  向Selenium做捐赠
+  通过Paypal
+    捐赠
+    
+通过赞助
+--------
+你可以赞助Selenium的项目，
+如果你希望因你的慷慨赞助而获得公共的认可
+
+Selenium的赞助人
+----------
+看看谁再赞助Selenium的项目
+
+================
+下载
+在下面你可以找到Selenium组件的最新发行版本。
+你也可以找到先前发行版本、源码的列表，以及为maven用户提供的额外信息（Maven是一个非常流行的Java构建工具）
+
+Selenium 独立运作的服务器
+-----------------------
+Selenium服务器的作用是为了能够运行“远程的Selenium Web驱动”。
+Selenium 3.X 不能够再直接运行Selenium RC了，而是通过“仿真”与WebDriverBackedSelenium接口来完成相同的任务；
+
+下载版本 3.141.59 // 子版本号怎么会那么大？
+
+如果想要运行从旧版本IDE中导出的Selenium测试，请使用Selenium Html Runner工具。
+
+如果想要在Grid配置中使用Selenium服务器，请参见此页面（wiki页面）
+
+IE 驱动服务器
+------------
+如果你想要使用WebDriver InternetExplorerDriver最新以及最棒的特性，你就会需要做这些。
+请确保这在你的$PATH(在windows系统中，变量名是%PATH%)变量上是可用的，只有这样，IE Driver才能够按照预期工作。
+
+下载版本3.14.0(推荐下载)为32位的Windows IE或者64位的Windows IE
+
+改变的日志
+
+Selenium客户端 & WebDriver语言绑定
+---------------------------------
+为了能够创建与Selenium 服务器（Selenium RC. Selenium 远程WebDriver）相交互的脚本
+或者创建本地的Selenium WebDriver脚本，你需要使用“指定语言的客户端驱动”
+这些语言包括1.x 与 2.x 类型的客户端。
+
+
+虽然(while)存在其他的语言绑定，但是下面这些是GitHub中托管的主要项目所支持的核心主体语言。
+语言  客户端版本 发行日期
+Java
+C#
+Ruby
+Python
+JS
+
+==============
+与Maven有关的一些信息
+
+如果你正在使用maven，你可以在maven中心仓库中通过以下链接直接找到所有的Selenium Maven artifacts：
+http://repo1.maven.org/maven2/org/seleniumhq/selenium/
+
+为了能够在你的Maven项目中开始使用DefaultSelenium或者某个新的WebDriver实现，
+只需要在你的pom文件中添加以下的依赖就行：
+<dependency>
+  selenium-java
+</dependency>
+注意：在版本2.0rc3之前，这个artifacts的名字叫做“selenium-remote-control"
+
+为了得到一个不同Selenium Maven artifacts的概览，点击下面的缩略图（thumbnail）来打开
+一个图表（diagram）——它会展示出这些artifacts之间的依赖关系以及这些个artifacts中最为重要的类或接口。
+
+shows the dependencies between the Selenium Maven artifacts as well as the most important classes/interfaces in those artifacts:
+
+
+there is no way to paste a screenshot,but I tell you what, it's a lot.
+
+
+如果你知道自己只会用到某一个具体的WebDriver的实现类（比如说FirefoxDriver），那你就不需要依赖于selenium-java工件
+——这个工件有很多的传递依赖。相反地，你可以仅仅在你需要的工件中添加依赖：
+<dependency>
+  selenium-firefox-driver
+</dependency>
+
+从2.53.0开始，你需要明确地包含HtmlUnitDriver作为一个依赖（这样你才能真正地包含它）。
+驱动的版本号现在能够追踪到HtmlUnit自身。
+
+如果你正在使用DefaultSelenium（或者RemoteWebDriver的实现类），你仍旧需要启动一个Selenium Server。
+最好的方式是从Selenium Download page中下载selenium-server-standalone.jar然后使用它。
+
+此外你还可以把Selenium Server嵌入到你的项目中，如果你在自己的pom.xml中添加以下的依赖：
+<dependency>
+  selenium-server
+</dependency>
+现在你可以自己创建一个SeleniumServer的实例并开启它。
+
+注意：
+留心，事实是selenium-server工件依赖于servlet-api-3.1.0工件。
+所以如果你的项目会运行在一个web应用容器中时，你需要把它排除在外。
+
+there's some more. but the battery is about to die. so let's call it a day~night.
+
+
+
