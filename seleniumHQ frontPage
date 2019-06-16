@@ -102,6 +102,16 @@ there is no way to paste a screenshot,but I tell you what, it's a lot.
 所以如果你的项目会运行在一个web应用容器中时，你需要把它排除在外。
 
 there's some more. but the battery is about to die. so let's call it a day~night.
+----
+seleniumhq不支持/开发第三方浏览器驱动程序
+PhantomJSDriver（GhostDriver）
+    <dependency>
+        <groupId>com.github.detro</groupId>
+        <artifactId>phantomjsdriver</artifactId>
+        <version>1.4.0</version>
+    </dependency> 
+    
+  
 
 
 
