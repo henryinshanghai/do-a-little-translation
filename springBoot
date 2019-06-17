@@ -1,0 +1,270 @@
+Spring Boot可以轻松创建独立的，生产级的基于Spring的应用程序————你可以直接运行它。
+
+我们对Spring平台和第三方库采取了先见之明，因此您可以尽量少的准备就开始编写应用。大多数Spring Boot应用程序只需要很少的Spring配置。
+
+特征;
+1 创建独立的Spring应用程序；
+2 直接嵌入Tomcat，Jetty或Undertow,aka,不需要部署WAR文件
+3 提供预置的“starter”依赖项以简化你构建配置的过程
+4 尽可能自动配置Spring和第三方库
+5 提供“生产环境中所需的功能”，例如指标，运行状况检查和外部化配置
+6 绝对没有代码生成，也不需要XML配置
+
+您也可以加入Gitter的Spring Boot社区！
+-----
+there is a vibe community for every open source software.
+-----
+
+会谈和录像
+这是一种魔术：在Spring Boot的封面下
+Spring Boot 2.0有什么新功能
+介绍Spring Boot 2.0网络研讨会
+使用Spring Boot进行测试驱动开发
+使用Spring Boot 2.0从Zero到Hero
+
+快速开始
+使用Spring Initializr启动您的应用程序。
+【launch 启动
+bootstrap 引导】
+
+Learn
+每个Spring项目都是一个独立的部分;
+它详细解释了如何使用项目特性以及使用它们可以实现的功能。
+
+指导
+该指南旨在在15-30分钟内完成，提供快速，实用的说明，用于为Spring的任何开发任务构建入门应用程序。
+
+构建一个RESTful形式的Web服务
+学习怎样使用Spring创建一个RESTful形式的web服务
+-----
+now this is an SOP;
+本指南将引导您完成使用Spring创建“hello world”RESTful Web服务的过程。
+
+你会构建的东西
+你将会构建一个接受HTTP GET请求的服务，这个GET请求的URL是：http://localhost:8080/greeting【协议：主机名：端口号/项目名】
+
+并使用JSON形式的问候语作为响应：
+{"id":1,"content":"Hello, World!"}
+
+您可以使用查询字符串中的可选参数name来自定义问候语：
+http://localhost:8080/greeting?name=User
+name参数的值将覆盖默认值“World”并反映在响应中：
+{"id":1,"content":"Hello, User!"}
+
+你需要的东西：
+差不多15分钟的时间；
+最喜欢的文本编辑器或IDE；
+JDK 1.8或者之后的版本；
+Gradle 4+或者Maven 3.2+；
+你也可以直接把代码导入到你的IDEA中：
+  Spring工具套件（STS）
+  IntelliJ IDEA
+  
+如何完成这个指导？
+与大多数Spring入门指南一样，您可以从头开始并完成每个步骤，
+或者您可以绕过您已熟悉的基本设置步骤。
+无论哪种方式，您最终都会得到可以工作的代码；
+
+要从头开始，请移步到Build with Gradle。
+
+如果想要跳过基础知识，执行以下操作：
+1 下载并解压缩本指南的源码仓库，或使用Git克隆它：
+git clone https://github.com/spring-guides/gs-rest-service.git
+2 cd到gs-rest-service /initial
+3 跳转到“创建资源表示类”。
+
+完成后，您可以根据gs-rest-service / complete中的代码检查结果。
+
+使用Gradle进行构建；
+使用Maven进行构建；
+---
+首先，设置一个基本的构建脚本。
+在使用Spring构建应用程序时，您可以使用任何您喜欢的构建系统，但此处包含您使用Maven所需的代码。
+如果您不熟悉Maven，请参阅使用Maven构建Java项目。
+
+创建目录结构
+在您选择的项目目录中，创建以下子目录结构;
+例如，在* nix系统上使用mkdir -p src / main / java / hello来创建子目录
+/src
+  /main
+    /java
+      /hello
+pom.xml
+<project>
+  <coordination>
+  <parent>
+  <dependencies>
+  <properties>
+  <build>
+</project>
+
+Spring Boot Maven插件提供了许多方便的功能：
+1 它收集classpath上的所有jar并构建一个可运行的“über-jar”，这会使执行和传输服务更加方便。
+2 它搜索public static void main（）方法以标记为可运行的类。
+3 它提供了一个内置的依赖项解析器，该解析器会设置版本号以匹配Spring Boot依赖项。
+  你可以覆盖任何您希望的版本，但它将默认为Boot的所选版本集合。
+  
+  
+-----
+使用IDE进行构建
+
+创建资源表示类
+现在您已经设置了项目和构建系统，您可以创建Web服务。
+通过考虑服务交互来开始这个过程。
+该服务将处理/ greeting的GET请求，可选地在查询字符串中使用name参数。
+GET请求应通过JSON的方式返回200 OK响应————其中JSON位于表示问候语的正文中。它应该看起来像这样：
+{
+    "id": 1,
+    "content": "Hello, World!"
+}
+
+id字段是问候语的唯一标识符，content是问候语的文本表示。
+
+要为问候语表示建模/创建对象，你需要创建资源表示形式类。
+提供一个普通的旧java对象，其中包含id和content数据字段的getter/setter方法、构造函数；
+src/main/java/hello/Greeting.java
+
+Greeting类的内容...
+
+正如您在下面的步骤中看到的，Spring使用Jackson JSON库自动封装
+Greeting类型的实例到JSON字符串中。
+
+接下来，您将创建资源控制器————它具体地提供这些问候服务。
+创建资源控制器
+在Spring构建RESTful Web服务的方法中，HTTP请求由控制器处理。
+这些组件可以通过@RestController注解来轻松识别，
+下面的GreetingController通过返回Greeting类的新实例来处理/ greeting的GET请求：
+src/main/JAVA/hello/GreetingController.java
+
+GreetingController.java
+@RestController
+###{
+  ###
+  
+  @RequestMapping("/greeting")
+  ###(@RequestParam(value="name", defaultValue="World") String name){
+    return new Greeting(###, ###);
+  }
+}
+
+psfs template = "Hello, %s";
+private final AtomicLong counter = new AtomicLong(); // 原子性计数器，用于为类的字段创建唯一的标识符
+
+这个控制器简洁而简单，但面罩之下有很多东西。让我们一步一步地分解它。
+
+1 @RequestMapping注释
+确保对/ greeting的HTTP请求映射到greeting（）方法。
+
+2 @RequestParam
+将查询字符串参数name的值绑定到greeting（）方法的name参数中。
+如果请求中不存在name参数，则使用defaultValue——“World”。
+
+方法体的实现：
+基于计数器的下一个值，创建并返回具有id和content属性的新Greeting对象，并使用greeting模板格式化给定的name变量值。
+
+说明：
+“传统MVC控制器”和上面的“RESTful Web服务控制器”之间的关键区别在于————创建HTTP响应主体的方式。
+这个RESTful Web服务控制器只是填充并返回一个Greeting对象，而不是依靠视图技术来执行“把greeting数据转化为HTML”的服务端渲染【传统MVC的做法】。
+对象数据将作为JSON对象直接被写入到HTTP响应中。
+
+此代码使用Spring 4的新@RestController注解
+作用：它将类标记为控制器，其中每个方法都返回一个“域对象”而不是“视图/页面文件”————这是@Controller和@ResponseBody放在一起的一种简写方式；
+
+Greeting对象必须转换为JSON。
+由于Spring HTTP消息转换器的支持，你不需要手动执行此转换。
+原理：因为Jackson 2在classpath上，所以Spring的MappingJackson2HttpMessageConverte会自动地r将Greeting实例转换为JSON。
+
+使应用程序可执行
+-----
+虽然可以选择把此服务打包为传统的WAR文件，以便部署到“外部应用程序服务器（如Tomcat）”。
+但下面演示了更简单的方法来创建一个独立的应用程序。
+你将所有内容打包在一个可执行的JAR文件中，由老相识Java main（）方法驱动。
+在此过程中，
+你使用“Spring对内置Tomcat容器地支持”来作为“HTTP运行时（？？？）”，而不是把程序部署到一个外部实例中。
+src/main/java/hello/Application.java
+
+@SpringBootApplication
+public class Application{
+  public static void main(String[] args){
+    SpringApplication.run(Application.calss, args);
+  }
+}
+
+@SpringBootApplication是一个便利的注解，它添加了以下所有内容：
+@Configuration
+  将类标记为应用程序上下文的bean定义源。
+@EnableAutoConfiguration
+  告诉Spring Boot根据“类路径设置”、其他bean以及“各种属性设置”来开始添加bean。
+  
+@EnableWebMvc：
+通常你会为Spring MVC应用程序添加@EnableWebMvc，
+但Spring Boot会在classpath上检查到spring-webmvc时，自动添加@EnableWebMvc。
+作用：
+  1 “将应用程序标记为Web应用程序”；
+  2 激活关键行为————例如设置DispatcherServlet。
+  
+@ComponentScan
+  告诉Spring在hello包中寻找其他组件，配置和服务，允许它找到控制器。
+  
+启动应用程序：
+手段：
+  main（）方法使用Spring Boot的SpringApplication.run（）方法来启动应用程序。
+特征：
+  1 您是否注意到没有一行XML？也没有web.xml文件。
+  2 此Web应用程序是100％纯Java————您无需处理配置任何plumber或基础设施。
+
+构建可执行的JAR
+运行应用程序；
+手段1：您可以使用Gradle或Maven从命令行运行该应用程序。
+手段2：您可以构建一个包含所有必需依赖项、类和资源的可执行JAR文件，然后运行该文件。
+  特征：这使得在整个开发生命周期中、跨不同环境等条件下运送服务、为服务制作版本、把服务部署成一个应用都变得很容易。
+  
+  
+如果您使用的是Gradle，则
+  1 可以使用./gradlew bootRun运行该应用程序。
+  2 或者您可以使用./gradlew build构建JAR文件。然后你可以运行JAR文件：
+    java -jar build/libs/gs-rest-service-0.1.0.jar
+  
+如果您使用的是Maven，则
+  1 可以使用./mvn spring-boot：run运行该应用程序。
+  2 或者您可以使用./mvn clean包构建JAR文件。然后你可以运行JAR文件：  
+    java -jar target/gs-rest-service-0.1.0.jar
+    
+上面的过程将会创建一个可运行的JAR。您也可以选择构建经典的WAR文件。   
+
+日志输出显示。该服务应在几秒钟内启动并运行。
+
+测试服务
+现在该服务已启动，请访问http：// localhost：8080 / greeting，其中显示：
+{"id":1,"content":"Hello, World!"}
+
+使用http：// localhost：8080 / greeting？name = User提供name查询字符串参数。注意content属性的值是如何从“Hello，World！”改变为“Hello，User！”：
+{"id":2,"content":"Hello, User!"}
+
+content值的更改表明：
+GreetingController中的@RequestParam排列正在按预期工作。
+name参数的默认值为“World”，但始终可以通过查询字符串显式覆盖。
+
+另请注意id属性如何从1更改为2.
+这证明您在多个请求中针对（against）相同的GreetingController实例工作，
+并且其计数器字段在每次调用时按预期递增。
+
+总结
+恭喜！您刚刚使用Spring开发了RESTful Web服务
+
+也可以看看
+以下指南也可能有所帮助：
+  ###
+  
+想要撰写新指南或为现有指南做出贡献？查看我们的贡献指南。
+所有指南均附带代码的ASLv2许可证，以及Attribution，NoDerivatives创作公共许可证。 
+
+项目：
+Spring Boot
+
+表格内容：
+###
+###
+###
+
+  
