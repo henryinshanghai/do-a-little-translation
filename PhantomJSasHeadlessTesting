@@ -1,0 +1,35 @@
+PhantomJS的一个主要应用是Web应用程序的无头测试。
+它适用于基于命令行的一般测试，在“precommit hook”中，以及作为持续集成系统的一部分。
+
+测试框架
+
+PhantomJS本身不是一个测试框架，它只用于通过合适的“测试运行器”来启动测试。
+下表总结了各种“测试框架”和相应的“测试运行器”的列表。
+如果框架不需要外部/第三方运行器，则将其标记为“内置”。
+
+框架  测试运行器
+Buster.JS	built-in
+Capybara	Poltergeist, Terminus
+Mocha	Chutzpah, mocha-phantomjs
+FuncUnit	built-in
+Hiro	built-in
+Karma (née Testacular)	built-in
+
+PhantomJS在其examples子目录中包含run-qunit和run-jasmine。
+但是，这些仅用于说明目的，缺乏实际使用所必需的、非常重要的报告功能！
+
+PhantomJS量身定制的测试
+此外，还有一些基于PhantomJS构建的相关项目，它们可为测试提供方便的高级功能：
+  Casper.js对于构建脚本导航和测试很有用
+  Lotte添加了类似jQuery的方法，链接和更多的断言逻辑
+  WebSpecter是一种用于Web应用程序的BDD样式验收测试框架
+  
+持续集成系统
+
+将PhantomJS与CI系统（如Jenkins或TeamCity）配合使用不需要特殊设置。
+确保在slave / build代理上正确安装了PhantomJS，并且它已准备就绪。
+
+由于PhantomJS在Linux上纯粹是无头的，因此代理可以在没有任何GUI的情况下运行。
+这意味着，没有X11的准Linux系统对于PhantomJS来说也不是问题————这使得可以在Amazon EC2或Heroku实例上生成轻型构建代理。
+
+Travis CI是一个流行的托管CI系统，内置了对PhantomJS的支持。请参阅其文档以获取详细信
