@@ -1,0 +1,105 @@
+PhantomJS是一个命令行工具。
+因此您需要熟悉命令提示符或PowerShell（在Windows上）或终端（在macOS和Linux上）的使用。
+
+前提：
+该指导教程假定——PhantomJS已安装并放置在PATH中的某个位置（例如，请参阅本教程中的Windows用户）。
+【把PhantomJS的安装目录添加到PATH系统变量中】
+
+Hello World！
+创建一个包含以下两行的新文本文件：
+  console.log（'Hello，world！'）;
+  phantom.exit（）;
+  
+将其保存为hello.js，然后从终端或命令提示符运行它：
+  phantomjs hello.js
+  
+输出是：Hello，world！
+在第一行中，console.log将传递的字符串打印到终端。
+在第二行中，phantom.exit终止执行。
+说明：在脚本中的某个位置调用phantom.exit非常重要，否则PhantomJS根本不会被终止。  
+
+页面加载
+通过创建webpage对象可以加载、分析和呈现网页。
+以下脚本演示了webpage对象的最简单用法。
+它加载example.com，然后将其保存为一个iamge，example.png被存放在被运行的脚本的相同目录中；
+  var page = require('webpage').create();
+  page.open('http://example.com', function(status) {
+    console.log("Status: " + status);
+    if(status === "success") {
+      page.render('example.png');
+    }
+    phantom.exit();
+  });
+由于其渲染功能，PhantomJS可用于捕获网页，实质上是截取内容的截图。
+
+以下loadspeed.js脚本加载指定的URL（不要忘记http协议）并测量加载它所需的时间。
+  var page = require('webpage').create(),
+    system = require('system'),
+    t, address;
+
+  if (system.args.length === 1) {
+    console.log('Usage: loadspeed.js [some URL]');
+    phantom.exit();
+  }
+
+  t = Date.now();
+  address = system.args[1];
+  page.open(address, function(status) {
+    if (status !== 'success') {
+      console.log('FAIL to load the address');
+    } else {
+      t = Date.now() - t;
+      console.log('Loading ' + system.args[1]);
+      console.log('Loading time ' + t + ' msec');
+    }
+    phantom.exit();
+  });
+使用以下命令来运行脚本：
+  phantomjs loadspeed.js http://www.google.com
+脚本运行的输出会像这样：
+  Loading http://www.google.com
+  Loading time 719 msec
+  
+代码评估
+
+要在网页上下文中评估JavaScript代码，请使用evaluate（）函数。
+这种执行方式是“沙盒化”的————代码无法访问其自身页面上下文之外的任何JavaScript对象和变量。
+
+从evaluate（）可以返回一个对象，但它仅限于简单对象，不能包含函数或闭包。
+
+下面是一个显示web页面标题的例子:
+  var page = require('webpage').create();
+  page.open(url, function(status) {
+    var title = page.evaluate(function() {
+      return document.title;
+    });
+    console.log('Page title is ' + title);
+    phantom.exit();
+  });
+  
+默认情况下，不会显示来自网页的任何控制台消息，包括来自evaluate（）内部的代码。
+要覆盖此行为，请使用onConsoleMessage回调。前面的示例可以重写为：
+  var page = require('webpage').create();
+  page.onConsoleMessage = function(msg) {
+    console.log('Page title is ' + msg);
+  };
+  page.open(url, function(status) {
+    page.evaluate(function() {
+      console.log(document.title);
+    });
+    phantom.exit();
+  });
+  
+由于脚本的执行就好像它在Web浏览器上运行一样，因此标准DOM脚本和CSS选择器工作得很好。
+它使PhantomJS适合于执行各种页面自动化任务。  
+  
+  
+更进一步地学习：
+
+上面显示的代码也可以在PhantomJS附带的各种示例中找到。
+还建议您探索使用PhantomJS进行“页面自动化”，“网络监控”，屏幕捕获和“无头测试”。  
+  
+  
+  
+
+  
