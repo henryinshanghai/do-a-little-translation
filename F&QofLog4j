@@ -1,0 +1,119 @@
+常见问题技术问题
+1 什么是log4j？
+log4j是一个帮助程序员将日志语句输出到各种输出目标的工具。
+如果应用程序出现问题，启用日志记录以便找到问题会很有帮助。
+使用log4j，可以在运行时启用日志记录而无需修改应用程序二进制文件。
+log4j包的设计使得日志语句可以保留在已发布的代码中，而不会产生高性能成本。
+因此，记录（或者不记录）的速度是关键。
+
+与此同时，日志输出可能会如此庞大，以至于很快就会变得无法控制。
+因此，log4j的一个显着特征是分层记录器的概念————使用记录器可以有选择地控制以任意粒度输出哪些日志语句。
+log4j在设计时考虑了三个目标：可靠性，速度和灵活性。
+这些要求之间存在紧密的平衡，我们相信log4j能够达到最佳平衡。
+
+
+2 log4j是一个可靠的日志系统吗？
+没有.log4j不可靠。
+它是一种尽力而为的故障停止记录系统。
+通过fail-stop，aka,log4j不会在运行时抛出意外的异常(这可能导致应用程序崩溃）。
+如果由于任何原因，log4j抛出未捕获的异常，请发送电子邮件至log4j-user@logging.apache.org邮件列表。
+未捕获的异常被视为需要立即关注的严重错误。
+
+此外，当log4j的指定输出流未打开、不可写或变满时，log4j将不会恢复为System.out或System.err。
+这样可以避免因为日志记录失败而淹没用户终端而破坏其他可用的程序。
+但是，log4j将向System.err输出简答的消息来说明无法执行日志记录。
+
+3 log4j的先决条件是什么？
+Log4j 1.2.8及更早版本与JDK 1.1.x及更高版本兼容，
+后续版本的log4j 1.2与JDK 1.2及更高版本兼容。
+
+DOMConfigurator基于DOM Level 1 API。
+DOMConfigurator.configure（Element）方法将能与任何“为它传递DOM树”的XML解析器一起使用。
+
+DOMConfigurator.configure（String filename）方法及其变体需要一个兼容JAXP的XML解析器，
+例如Xerces或Sun的解析器。
+“编译DOMConfigurator”需要在类路径中存在JAXP解析器。
+
+org.apache.log4j.net.SMTPAppender依赖于JavaMail API。
+它已经过JavaMail API 1.2版的测试。
+JavaMail API需要JavaBeans Activation Framework包。
+
+org.apache.log4j.net.JMSAppender需要JMS API以及JNDI的存在。
+log4j测试代码依赖于JUnit测试框架。
+
+4 log4j的功能有哪些？
+  log4j针对速度进行了优化。
+  log4j基于命名的记录器层次结构。
+  log4j是失败停止。但是，尽管它确实努力确保交付，但log4j并不保证每个日志语句都将传递到其目的地。
+  log4j是线程安全的。
+  log4j不限于预定义的一组设施。
+  可以使用配置文件在运行时设置日志记录行为。配置文件可以是属性文件，也可以是XML格式。
+  log4j旨在从异常发生时开始就处理Java Exceptions。
+  log4j可以将其输出定向到文件、控制台、java.io.OutputStream、java.io.Writer、
+  使用TCP的远程服务器、远程Unix Syslog守护程序，
+  或者使用JMS的远程侦听器、NT EventLog甚至发送电子邮件。
+  log4j使用6个级别，即TRACE，DEBUG，INFO，WARN，ERROR和FATAL。
+  通过扩展Layout类可以轻松更改日志输出的格式。
+  可以通过Appender接口的实现类来更改日志输出的目标以及写入策略。 
+  log4j支持每个记录器对应多个输出appender。
+  log4j支持国际化。
+  
+ 5 是否有使用log4j的示例代码？
+  请参阅examples /目录。
+  
+6 我应该阅读哪些文档来了解有关log4j的更多信息？
+请务必阅读简短手册。
+还建议您阅读完整的log4j手册，该手册更加详细和最新。
+这两份文件均由CekiGülcü撰写。  
+  
+  
+7 log4j是否是线程安全的？
+是的，log4j是线程安全的。Log4j组件设计用于大量多线程系统。  
+
+8 日志输出是什么样的？
+日志输出可以通过多种方式进行自定义。
+此外，可以通过实现自己的Layout来完全覆盖输出格式。
+以下是使用PatternLayout的示例输出，其转换模式为————“％r [％t]％-5p％c {2}％x  - ％m％n”
+    176 [main] INFO  examples.Sort - Populating an array of 2 elements in reverse order.
+    225 [main] INFO  examples.SortAlgo - Entered the sort method.
+    262 [main] DEBUG SortAlgo.OUTER i=1 - Outer loop.
+    276 [main] DEBUG SortAlgo.SWAP i=1 j=0 - Swapping intArray[0] = 1 and intArray[1] = 0
+    290 [main] DEBUG SortAlgo.OUTER i=0 - Outer loop.
+    304 [main] INFO  SortAlgo.DUMP - Dump of interger array:
+    317 [main] INFO  SortAlgo.DUMP - Element [0] = 0
+    331 [main] INFO  SortAlgo.DUMP - Element [1] = 1
+    343 [main] INFO  examples.Sort - The next log statement should be an error message.
+    346 [main] ERROR SortAlgo.DUMP - Tried to dump an uninitialized array.
+            at org.log4j.examples.SortAlgo.dump(SortAlgo.java:58)
+            at org.log4j.examples.Sort.main(Sort.java:64)
+    467 [main] INFO  examples.Sort - Exiting main method.
+  
+ 第一个字段是自程序启动以来经过的毫秒数。
+ 第二个字段是输出日志语句的线程。
+ 第三个字段是日志语句的级别。
+ 第四个字段是记录器发出日志请求的最右边的两个组件。
+ 第五个字段（在' - '之前）是嵌套诊断上下文（NDC）。
+  请注意，嵌套诊断上下文可能为空就像前两个语句中的那样。
+  ' - '后面的文本是语句的消息。
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
